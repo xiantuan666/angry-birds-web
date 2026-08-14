@@ -1,9 +1,13 @@
 /** 关卡管理器：加载/重开/下一关/卸载（新增关卡只需注册数据，不改核心逻辑）。 */
 import type { LevelConfig } from './Level';
 import { level01 } from './level01';
+import { level02 } from './level02';
+import { level03 } from './level03';
 
 const LEVELS: Record<number, LevelConfig> = {
   1: level01,
+  2: level02,
+  3: level03,
 };
 
 /** 已注册的关卡数（Level Select 显示用） */
