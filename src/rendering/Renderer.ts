@@ -232,13 +232,24 @@ export class Renderer {
   }
 
   private drawTrajectory(trajectory: { x: number; y: number }[]): void {
-    if (trajectory.length === 0) return;
+    if (trajectory.length < 2) return;
     const ctx = this.ctx;
     ctx.save();
-    ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    for (const p of trajectory) {
+    // 半透明曲线 + 圆点，呈现清晰的抛物线
+    ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(trajectory[0].x, trajectory[0].y);
+    for (let i = 1; i < trajectory.length; i++) {
+      ctx.lineTo(trajectory[i].x, trajectory[i].y);
+    }
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    for (let i = 0; i < trajectory.length; i += 2) {
       ctx.beginPath();
-      ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+      ctx.arc(trajectory[i].x, trajectory[i].y, 3, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.restore();

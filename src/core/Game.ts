@@ -453,7 +453,9 @@ export class Game implements PointerDragTarget {
       this.trajectory = [];
       return;
     }
-    this.trajectory = predictTrajectory(pos, result.velocity, GAME.PREDICT_GRAVITY, 30, 0.08, GAME.PREDICT_FRICTION_AIR);
+    // Matter 速度单位为"每帧"，轨迹预测按"每秒"计算，需换算（×60）
+    const velocityPerSec = { x: result.velocity.x * 60, y: result.velocity.y * 60 };
+    this.trajectory = predictTrajectory(pos, velocityPerSec, GAME.PREDICT_GRAVITY, 90, 0.025, GAME.PREDICT_FRICTION_AIR);
   }
 
   private resetProjectileToSling(): void {

@@ -18,15 +18,15 @@ export const GAME = {
   /** 最大拉弓距离（世界单位） */
   MAX_PULL_DISTANCE: 110,
   /** 发射速度系数：velocity = direction * LAUNCH_POWER * pullRatio（Matter 单位为 单位/帧） */
-  LAUNCH_POWER: 20,
+  LAUNCH_POWER: 24,
   /** 发射速度上限（单位/帧） */
-  MAX_LAUNCH_VELOCITY: 24,
+  MAX_LAUNCH_VELOCITY: 26,
   /** 松手时最小有效拉弓比例，低于则放回弹弓不消耗角色 */
   MIN_LAUNCH_RATIO: 0.12,
   /** 瞄准轨迹预测用重力加速度（世界单位/秒²，与 Matter gravity.y=1 等效） */
   PREDICT_GRAVITY: 1000,
   /** 瞄准轨迹预测用空气阻力（与刚体 frictionAir 一致，默认 0.01） */
-  PREDICT_FRICTION_AIR: 0.01,
+  PREDICT_FRICTION_AIR: 0.002,
   /** 角色飞行超时（秒），超时视为本发结束 */
   PROJECTILE_TIMEOUT: 8,
   /** 物理稳定判定：动态体平均速度低于该值即视为接近静止（单位/帧） */

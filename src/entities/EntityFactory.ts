@@ -22,6 +22,8 @@ export class EntityFactory {
       density: config.density,
       friction: config.friction,
       restitution: config.restitution,
+      // 角色飞行空气阻力调低，让飞行距离更远、更接近经典手感
+      frictionAir: 0.002,
       // 等待发射时静态且不参与碰撞（发射时恢复动态与 mask）
       isStatic: true,
       collisionFilter: { category: CATEGORY.PROJECTILE, mask: 0 },
