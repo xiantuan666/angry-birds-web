@@ -641,9 +641,9 @@ export class Game implements PointerDragTarget {
     );
   }
 
-  /** 相机取景目标 Y：手机地面在屏幕 70% 处，电脑在 50% 处 */
+  /** 相机取景目标 Y：手机地面在屏幕 30% 处（保证底部被裁时地面/建筑仍可见），电脑在 50% 处 */
   private snapTargetY(): number {
-    const ratio = this.isMobile() ? 0.7 : 0.5;
+    const ratio = this.isMobile() ? 0.3 : 0.5;
     return GAME.GROUND_Y - GAME.VIEW_HEIGHT * ratio + GAME.VIEW_HEIGHT / 2;
   }
 
