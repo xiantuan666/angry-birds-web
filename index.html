@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>愤怒的小鸟 · 网页复刻</title>
+  <meta name="description" content="网页版 2D 弹射物理益智游戏：选择角色、弹弓瞄准、发射、碰撞坍塌、击倒目标、计分通关。" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="game-canvas"></canvas>
+    <div id="ui-layer">
+      <div id="screen-loading" class="screen">
+        <div class="box"><h1 class="game-title">Slingshot</h1><p id="loading-progress">加载中… 0%</p></div>
+      </div>
+      <div id="screen-menu" class="screen hidden">
+        <div class="box">
+          <h1 class="game-title">愤怒的小鸟</h1>
+          <p class="game-subtitle">网页复刻 · Slingshot</p>
+          <button class="btn primary" data-action="play">开始游戏</button>
+          <button class="btn" data-action="levels">关卡选择</button>
+          <button class="btn" data-action="settings">设置</button>
+        </div>
+      </div>
+      <div id="screen-levels" class="screen hidden">
+        <div class="box">
+          <h2>选择关卡</h2>
+          <div id="level-list" class="level-list"></div>
+          <button class="btn back" data-action="menu">返回</button>
+        </div>
+      </div>
+      <div id="screen-settings" class="screen hidden">
+        <div class="box">
+          <h2>设置</h2>
+          <label class="slider-row">主音量 <input id="set-master" type="range" min="0" max="1" step="0.05" value="0.8" /></label>
+          <label class="slider-row">音乐 <input id="set-music" type="range" min="0" max="1" step="0.05" value="0.7" /></label>
+          <label class="slider-row">音效 <input id="set-sfx" type="range" min="0" max="1" step="0.05" value="1" /></label>
+          <button class="btn back" data-action="settings-back">返回</button>
+        </div>
+      </div>
+      <div id="hud" class="hidden">
+        <div class="hud-top">
+          <div class="hud-item">分数 <span id="hud-score">0</span></div>
+          <div class="hud-item">第 <span id="hud-level">1</span> 关</div>
+          <div class="hud-actions">
+            <button id="btn-pause" class="icon-btn" title="暂停">⏸</button>
+            <button id="btn-fullscreen" class="icon-btn" title="全屏">⛶</button>
+          </div>
+        </div>
+        <div class="hud-bottom">
+          <div class="hud-item">剩余角色</div>
+          <div id="hud-projectiles" class="hud-projectiles"></div>
+        </div>
+      </div>
+      <div id="screen-pause" class="screen hidden">
+        <div class="box modal">
+          <h2>暂停</h2>
+          <button class="btn primary" data-action="resume">继续</button>
+          <button class="btn" data-action="restart">重新开始</button>
+          <button class="btn" data-action="settings">设置</button>
+          <button class="btn" data-action="menu">返回主菜单</button>
+        </div>
+      </div>
+      <div id="screen-complete" class="screen hidden">
+        <div class="box modal">
+          <h2>过关！</h2>
+          <div id="complete-stars" class="stars"></div>
+          <p class="complete-score">得分 <span id="complete-score">0</span></p>
+          <button class="btn primary" data-action="next">下一关</button>
+          <button class="btn" data-action="retry">重试</button>
+          <button class="btn" data-action="levels">关卡选择</button>
+        </div>
+      </div>
+      <div id="screen-failed" class="screen hidden">
+        <div class="box modal">
+          <h2>失败了</h2>
+          <p>再试一次吧！</p>
+          <button class="btn primary" data-action="retry">重试</button>
+          <button class="btn" data-action="levels">关卡选择</button>
+        </div>
+      </div>
+      <div id="portrait-hint" class="hidden">请横屏游玩</div>
+    </div>
+    <div id="debug-panel" class="hidden"></div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

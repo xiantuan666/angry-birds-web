@@ -1,0 +1,364 @@
+:root {
+  --bg: #0f1720;
+  --panel: rgba(20, 28, 38, 0.92);
+  --accent: #ff6b35;
+  --text: #f5f5f5;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  font-family: system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  color: var(--text);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+#game-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 30%, #1b2a3a, #0b1118);
+}
+
+#game-canvas {
+  display: block;
+  touch-action: none;
+  cursor: crosshair;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
+}
+
+#ui-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  background: rgba(8, 12, 18, 0.55);
+}
+
+#screen-menu {
+  background-image: linear-gradient(rgba(8, 12, 18, 0.45), rgba(8, 12, 18, 0.45)), url('/assets/ui/menu-bg.png');
+  background-size: cover;
+  background-position: center;
+}
+
+#screen-levels {
+  background-image: linear-gradient(rgba(8, 12, 18, 0.55), rgba(8, 12, 18, 0.55)), url('/assets/ui/level-select-bg.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.box {
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 36px 48px;
+  min-width: 320px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.game-title {
+  font-size: 46px;
+  color: var(--accent);
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+}
+
+.game-subtitle {
+  opacity: 0.7;
+  margin-bottom: 8px;
+}
+
+.btn {
+  font-size: 18px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  background: #2c3e50;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.12s ease, filter 0.12s ease, box-shadow 0.12s ease;
+}
+
+.btn:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.btn.primary {
+  background: var(--accent);
+  box-shadow: 0 6px 0 #b3451f;
+}
+
+.btn.primary:active {
+  box-shadow: 0 2px 0 #b3451f;
+}
+
+.btn.back {
+  background: #3a4a5c;
+}
+
+.modal {
+  min-width: 360px;
+}
+
+/* HUD */
+#hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px 18px;
+}
+
+.hud-top,
+.hud-bottom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hud-top {
+  justify-content: space-between;
+}
+
+.hud-item {
+  background: rgba(10, 16, 24, 0.7);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  pointer-events: auto;
+  background: rgba(10, 16, 24, 0.7);
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  background: rgba(40, 56, 72, 0.9);
+}
+
+.hud-projectiles {
+  display: flex;
+  gap: 8px;
+}
+
+.proj-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 16, 24, 0.7);
+  font-size: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+}
+
+.proj-icon.current {
+  border-color: var(--accent);
+  box-shadow: 0 0 10px rgba(255, 107, 53, 0.8);
+}
+
+.proj-icon.used {
+  opacity: 0.35;
+}
+
+/* 关卡选择 */
+.level-list {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 460px;
+}
+
+.level-btn {
+  width: 84px;
+  height: 84px;
+  font-size: 26px;
+  border-radius: 14px;
+  border: none;
+  background: #2c3e50;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.level-btn.locked {
+  background: #1b2530;
+  color: #6b7785;
+  cursor: not-allowed;
+}
+
+.level-btn:not(.locked):hover {
+  filter: brightness(1.2);
+}
+
+.level-stars {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #ffd54f;
+}
+
+/* 星级 */
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  font-size: 44px;
+}
+
+.stars .star {
+  color: #5a6472;
+  opacity: 0;
+  transform: scale(0.4);
+}
+
+.stars .star.filled {
+  color: #ffd54f;
+}
+
+.stars.pop .star {
+  animation: star-pop 0.45s ease forwards;
+}
+
+.stars.pop .star:nth-child(2) {
+  animation-delay: 0.35s;
+}
+
+.stars.pop .star:nth-child(3) {
+  animation-delay: 0.7s;
+}
+
+@keyframes star-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4) rotate(-20deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+.complete-score {
+  font-size: 20px;
+}
+
+/* 设置 */
+.slider-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 16px;
+}
+
+.slider-row input {
+  flex: 1;
+}
+
+/* 横屏提示 */
+#portrait-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  pointer-events: auto;
+  z-index: 60;
+}
+
+/* Debug 面板 */
+#debug-panel {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.78);
+  color: #9ff;
+  font: 12px/1.6 monospace;
+  padding: 10px 14px;
+  border-radius: 8px;
+  min-width: 240px;
+  pointer-events: auto;
+  z-index: 50;
+}
+
+#debug-panel label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+#debug-panel input[type='range'] {
+  width: 110px;
+}
+
+.db-title {
+  font-weight: bold;
+  color: #ffd54f;
+  margin-bottom: 4px;
+}
+
+.db-keys {
+  margin-top: 6px;
+  color: #aaa;
+}
