@@ -46,7 +46,7 @@ export class UIManager {
       });
     });
     byId('btn-pause')?.addEventListener('click', () => this.actionHandler('pause'));
-    (['master', 'music', 'sfx'] as const).forEach((k) => {
+    (['master', 'music', 'sfx', 'screen'] as const).forEach((k) => {
       byId<HTMLInputElement>(`set-${k}`)?.addEventListener('input', () => this.emitSettings());
     });
   }
@@ -67,6 +67,7 @@ export class UIManager {
     set('set-master', s.masterVolume);
     set('set-music', s.musicVolume);
     set('set-sfx', s.sfxVolume);
+    set('set-screen', s.screenScale);
   }
 
   private emitSettings(): void {
@@ -78,6 +79,7 @@ export class UIManager {
       masterVolume: val('set-master'),
       musicVolume: val('set-music'),
       sfxVolume: val('set-sfx'),
+      screenScale: val('set-screen'),
     });
   }
 

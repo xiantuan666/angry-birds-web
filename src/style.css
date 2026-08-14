@@ -28,6 +28,8 @@ body {
   position: relative;
   width: 100vw;
   height: 100vh;
+  height: 100dvh; /* 移动端地址栏正确高度（旧浏览器回退 100vh） */
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -402,20 +404,6 @@ body {
   18% { transform: translateX(-50%) scale(1); }
   82% { opacity: 0.94; transform: translateX(-50%) scale(1); }
   100% { opacity: 0; transform: translateX(-50%) scale(0.95); }
-}
-
-/* 横屏提示 */
-#portrait-hint {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26px;
-  background: rgba(0, 0, 0, 0.85);
-  color: #fff;
-  pointer-events: auto;
-  z-index: 60;
 }
 
 /* Debug 面板 */

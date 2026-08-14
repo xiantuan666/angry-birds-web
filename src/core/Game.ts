@@ -126,6 +126,7 @@ export class Game implements PointerDragTarget {
     this.loop.stop();
     this.input?.dispose();
     window.removeEventListener('resize', this.handleResize);
+    window.visualViewport?.removeEventListener('resize', this.handleResize);
     window.removeEventListener('keydown', this.handleKeydown);
     document.removeEventListener('visibilitychange', this.handleVisibility);
     this.unloadLevel();
@@ -140,8 +141,10 @@ export class Game implements PointerDragTarget {
     this.debugPanel = new DebugPanel(panelEl, this.debugHooks());
 
     window.addEventListener('resize', this.handleResize);
+    window.visualViewport?.addEventListener('resize', this.handleResize);
     window.addEventListener('keydown', this.handleKeydown);
     document.addEventListener('visibilitychange', this.handleVisibility);
+    this.renderer.setScreenScale(this.save.getSettings().screenScale);
     this.handleResize();
 
     this.loop.onStep = (dt) => this.update(dt);
@@ -166,6 +169,8 @@ export class Game implements PointerDragTarget {
       this.audio.setMasterVolume(settings.masterVolume);
       this.audio.setMusicVolume(settings.musicVolume);
       this.audio.setSfxVolume(settings.sfxVolume);
+      this.renderer?.setScreenScale(settings.screenScale);
+      this.handleResize();
     });
     const s = this.save.getSettings();
     this.ui.applySettings(s);
@@ -635,17 +640,8 @@ export class Game implements PointerDragTarget {
 
   private handleResize = (): void => {
     if (!this.renderer) return;
-    const container = document.getElementById('game-container');
-    if (!container) return;
-    const rect = container.getBoundingClientRect();
-    this.renderer.resize(rect.width, rect.height);
-    const hint = document.getElementById('portrait-hint');
-    if (hint) {
-      hint.classList.toggle(
-        'hidden',
-        !(window.matchMedia('(orientation: portrait)').matches && window.innerWidth < 900),
-      );
-    }
+    // 用真实可视区（innerWidth/innerHeight）计算，避免移动端 100vh 含地址栏高度导致显示不全
+    this.renderer.resize(window.innerWidth, window.innerHeight);
   };
 
   private handleKeydown = (e: KeyboardEvent): void => {

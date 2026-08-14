@@ -1,5 +1,6 @@
 /** 指针输入：统一鼠标/触摸/触控笔，只跟踪单个指针，防止多指误操作。 */
 import type { Camera } from '../camera/Camera';
+import { GAME } from '../config/game';
 
 export interface PointerDragTarget {
   /** 命中检测（世界坐标） */
@@ -74,6 +75,9 @@ export class PointerController {
 
   private toWorld(e: PointerEvent): { x: number; y: number } {
     const rect = this.canvas.getBoundingClientRect();
-    return this.camera.screenToWorld(e.clientX - rect.left, e.clientY - rect.top);
+    // 画布 CSS 尺寸可能 ≠ 逻辑 1280x720（缩放/手机适配），需换算为逻辑坐标
+    const sx = (e.clientX - rect.left) * (GAME.VIEW_WIDTH / rect.width);
+    const sy = (e.clientY - rect.top) * (GAME.VIEW_HEIGHT / rect.height);
+    return this.camera.screenToWorld(sx, sy);
   }
 }
