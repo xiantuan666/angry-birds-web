@@ -60,4 +60,20 @@ describe('关卡数据合法性', () => {
     expect(level01.targets.length).toBeGreaterThanOrEqual(2);
     expect(level01.blocks.length).toBeGreaterThanOrEqual(5);
   });
+
+  it('每关至少 3 种不同猪类型（多样化）', () => {
+    for (const lv of LEVELS) {
+      const types = new Set(lv.targets.map((t) => t.type));
+      expect(types.size, `${lv.id} 猪类型不足 3 种`).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it('pig4 / pig5 目标类型已配置', () => {
+    expect(TARGETS['pig4']).toBeDefined();
+    expect(TARGETS['pig5']).toBeDefined();
+    expect(TARGETS['pig4'].health).toBe(70);
+    expect(TARGETS['pig4'].scoreValue).toBe(550);
+    expect(TARGETS['pig5'].health).toBe(70);
+    expect(TARGETS['pig5'].scoreValue).toBe(550);
+  });
 });

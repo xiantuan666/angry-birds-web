@@ -41,4 +41,6 @@ export const TARGETS: Record<string, TargetConfig> = {
   basic: { id: 'basic', name: '小猪', sprite: ASSETS.pigs.basic, radius: 22, mass: 1.0, health: 60, scoreValue: 500 },
   helmet: { id: 'helmet', name: '铁盔猪', sprite: ASSETS.pigs.helmet, radius: 23, mass: 1.2, health: 120, scoreValue: 750 },
   king: { id: 'king', name: '猪王', sprite: ASSETS.pigs.king, radius: 27, mass: 1.5, health: 180, scoreValue: 1000 },
+  pig4: { id: 'pig4', name: '小猪4号', sprite: ASSETS.pigs.pig4, radius: 22, mass: 1.0, health: 70, scoreValue: 550 },
+  pig5: { id: 'pig5', name: '小猪5号', sprite: ASSETS.pigs.pig5, radius: 22, mass: 1.0, health: 70, scoreValue: 550 },
 };

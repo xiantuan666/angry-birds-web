@@ -348,8 +348,10 @@ export class Game implements PointerDragTarget {
     this.projectileQueue = [...level.projectiles];
     this.loadNextProjectile();
 
-    // 预热物理，让结构自然沉降稳定（避免开局抖动）
-    for (let i = 0; i < 90; i++) this.world.step(GAME.FIXED_TIMESTEP);
+    // 预热物理：先关闭睡眠让结构彻底沉降，再开启睡眠（避免支撑叠加时被冻结在相交状态）
+    this.world.engine.enableSleeping = false;
+    for (let i = 0; i < 120; i++) this.world.step(GAME.FIXED_TIMESTEP);
+    this.world.engine.enableSleeping = true;
 
     this.camera.snapTo(level.launcher.x + 420, GAME.GROUND_Y - 120);
     this.camera.zoom = 1;

@@ -15,6 +15,8 @@ export const ASSETS = {
     basic: '/assets/pigs/basic.png',
     helmet: '/assets/pigs/helmet.png',
     king: '/assets/pigs/king.png',
+    pig4: '/assets/pigs/pig4.png',
+    pig5: '/assets/pigs/pig5.png',
   },
   blocks: {
     wood: '/assets/blocks/wood.png',

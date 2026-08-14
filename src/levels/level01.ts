@@ -12,8 +12,8 @@ export const level01: LevelConfig = {
   projectiles: ['red', 'red', 'yellow', 'blue', 'black', 'white'],
   targets: [
     { type: 'basic', x: 1050, y: GY - 22 },
-    { type: 'basic', x: 1050, y: 768 },
-    { type: 'basic', x: 1450, y: 834 },
+    { type: 'pig4', x: 1050, y: 768 },
+    { type: 'helmet', x: 1450, y: 834 },
   ],
   blocks: [
     { material: 'stone', x: 960, y: GY - 75, width: 30, height: 150 },
