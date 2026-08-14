@@ -9,6 +9,9 @@ import type { Target } from '../entities/Target';
 import type { Block } from '../entities/Block';
 import type { Launcher } from '../entities/Launcher';
 
+/** 方块纹理平铺尺寸（世界单位） */
+const BLOCK_TILE = 64;
+
 function materialColor(material: string): string {
   switch (material) {
     case 'wood': return '#c9975b';
@@ -20,6 +23,7 @@ function materialColor(material: string): string {
 
 export class Renderer {
   private readonly ctx: CanvasRenderingContext2D;
+  private readonly patternCache = new Map<string, CanvasPattern>();
   private dpr = 1;
   private viewW = GAME.VIEW_WIDTH;
   private viewH = GAME.VIEW_HEIGHT;
@@ -28,6 +32,24 @@ export class Renderer {
 
   setScreenScale(v: number): void {
     this.screenScale = v;
+  }
+
+  /** 生成/复用平铺纹理图案（按 BLOCK_TILE 等比缩放居中裁切，避免拉伸变形） */
+  private getBlockPattern(img: HTMLImageElement): CanvasPattern | null {
+    const cached = this.patternCache.get(img.src);
+    if (cached) return cached;
+    const c = document.createElement('canvas');
+    c.width = BLOCK_TILE;
+    c.height = BLOCK_TILE;
+    const g = c.getContext('2d');
+    if (!g) return null;
+    const scale = Math.max(BLOCK_TILE / img.width, BLOCK_TILE / img.height);
+    const w = img.width * scale;
+    const h = img.height * scale;
+    g.drawImage(img, (BLOCK_TILE - w) / 2, (BLOCK_TILE - h) / 2, w, h);
+    const pattern = this.ctx.createPattern(c, 'repeat');
+    if (pattern) this.patternCache.set(img.src, pattern);
+    return pattern;
   }
 
   constructor(
@@ -188,7 +210,17 @@ export class Renderer {
       ctx.translate(pos.x, pos.y);
       ctx.rotate(e.body.angle);
       if (img) {
-        ctx.drawImage(img, -blk.width / 2, -blk.height / 2, blk.width, blk.height);
+        // 平铺纹理填充，避免把整张贴图拉伸到方块尺寸导致变形
+        const pattern = this.getBlockPattern(img);
+        if (pattern) {
+          ctx.fillStyle = pattern;
+          ctx.fillRect(-blk.width / 2, -blk.height / 2, blk.width, blk.height);
+        } else {
+          ctx.drawImage(img, -blk.width / 2, -blk.height / 2, blk.width, blk.height);
+        }
+        ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(-blk.width / 2, -blk.height / 2, blk.width, blk.height);
       } else {
         ctx.fillStyle = materialColor(blk.material);
         ctx.fillRect(-blk.width / 2, -blk.height / 2, blk.width, blk.height);
