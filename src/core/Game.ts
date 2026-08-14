@@ -645,6 +645,12 @@ export class Game implements PointerDragTarget {
     // 优先用 visualViewport（移动端真实可见区，随地址栏显隐变化），否则退回 innerWidth/innerHeight
     const w = window.visualViewport ? window.visualViewport.width : window.innerWidth;
     const h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    // 关键：把容器也钉到真实可见区，避免容器按布局视口（含地址栏区域）偏大导致画布底部被裁（看不到地面）
+    const container = document.getElementById('game-container');
+    if (container) {
+      container.style.width = `${w}px`;
+      container.style.height = `${h}px`;
+    }
     this.renderer.resize(w, h);
   };
 
