@@ -3,6 +3,8 @@
  */
 
 export const GAME = {
+  /** 版本号（主界面显示；每次更新递增） */
+  VERSION: '1.7.0',
   /** 世界尺寸（世界坐标） */
   WORLD_WIDTH: 3000,
   WORLD_HEIGHT: 1200,

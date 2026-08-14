@@ -1,6 +1,7 @@
 /** UI 管理：DOM 屏幕切换、HUD、关卡选择、结算、设置。 */
 import type { SaveSystem, Settings } from '../save/SaveSystem';
 import { CHARACTERS } from '../config/characters';
+import { GAME } from '../config/game';
 import { LEVEL_COUNT } from '../levels/LevelManager';
 
 export type UIAction =
@@ -46,6 +47,8 @@ export class UIManager {
       });
     });
     byId('btn-pause')?.addEventListener('click', () => this.actionHandler('pause'));
+    const verEl = byId('game-version');
+    if (verEl) verEl.textContent = `版本 v${GAME.VERSION}`;
     (['master', 'music', 'sfx'] as const).forEach((k) => {
       byId<HTMLInputElement>(`set-${k}`)?.addEventListener('input', () => this.emitSettings());
     });

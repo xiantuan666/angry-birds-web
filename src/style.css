@@ -120,6 +120,11 @@ body {
   margin-bottom: 8px;
 }
 
+.game-version {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
 .btn {
   font-size: 18px;
   padding: 12px 20px;
