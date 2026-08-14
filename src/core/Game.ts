@@ -355,7 +355,7 @@ export class Game implements PointerDragTarget {
     for (let i = 0; i < 120; i++) this.world.step(GAME.FIXED_TIMESTEP);
     this.world.engine.enableSleeping = true;
 
-    this.camera.snapTo(level.launcher.x + 420, GAME.GROUND_Y - 120);
+    this.camera.snapTo(level.launcher.x + 420, GAME.GROUND_Y - GAME.LAUNCHER_HEIGHT);
     this.camera.zoom = 1;
   }
 
@@ -393,7 +393,7 @@ export class Game implements PointerDragTarget {
     this.settleTimer = 0;
     this.completeTimer = 0;
     this.trajectory = [];
-    this.camera.snapTo(this.launcher.anchor.x + 420, GAME.GROUND_Y - 120);
+    this.camera.snapTo(this.launcher.anchor.x + 420, GAME.GROUND_Y - GAME.LAUNCHER_HEIGHT);
     this.setState(GameState.AIMING);
     this.refreshHud();
   }
@@ -590,7 +590,7 @@ export class Game implements PointerDragTarget {
     this.ui.showHud(false);
     this.ui.showComplete(score, stars, maxScore);
     this.audio.play('levelComplete');
-    this.camera.snapTo(this.level.world.width / 2, GAME.GROUND_Y - 120);
+    this.camera.snapTo(this.level.world.width / 2, GAME.GROUND_Y - GAME.LAUNCHER_HEIGHT);
   }
 
   private failLevel(): void {

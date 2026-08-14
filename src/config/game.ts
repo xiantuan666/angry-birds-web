@@ -11,8 +11,8 @@ export const GAME = {
   VIEW_HEIGHT: 720,
   /** 固定物理时间步长（秒） */
   FIXED_TIMESTEP: 1 / 60,
-  /** 地面顶部 Y（世界坐标） */
-  GROUND_Y: 950,
+  /** 地面顶部 Y（世界坐标）——抬高地基，让弹弓位于屏幕中部 */
+  GROUND_Y: 800,
   /** 弹弓锚点相对地面的高度（世界坐标） */
   LAUNCHER_HEIGHT: 100,
   /** 最大拉弓距离（世界单位） */
