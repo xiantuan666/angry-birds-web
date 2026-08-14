@@ -74,14 +74,22 @@ export class PointerController {
   }
 
   private toWorld(e: PointerEvent): { x: number; y: number } {
-    // 优先用 offsetX/offsetY（相对画布自身局部坐标，旋转后依然正确）；个别环境缺失时退回 rect 方式
-    const rect = this.canvas.getBoundingClientRect();
-    const cssX = typeof e.offsetX === 'number' ? e.offsetX : e.clientX - rect.left;
-    const cssY = typeof e.offsetY === 'number' ? e.offsetY : e.clientY - rect.top;
-    const cw = this.canvas.clientWidth || rect.width || 1;
-    const ch = this.canvas.clientHeight || rect.height || 1;
-    const sx = cssX * (GAME.VIEW_WIDTH / cw);
-    const sy = cssY * (GAME.VIEW_HEIGHT / ch);
-    return this.camera.screenToWorld(sx, sy);
+    // 统一用 clientX/clientY（所有浏览器/触摸都可靠），竖屏旋转时按精确公式逆旋转回画布局部坐标
+    const cw = this.canvas.clientWidth || 1;
+    const ch = this.canvas.clientHeight || 1;
+    let cssX: number;
+    let cssY: number;
+    if (window.matchMedia('(orientation: portrait)').matches) {
+      // 竖屏：容器旋转 90°，视觉(x,y) → 容器局部(lx,ly)：lx = y, ly = 视口宽 - x
+      const lx = e.clientY;
+      const ly = window.innerWidth - e.clientX;
+      cssX = (lx - this.canvas.offsetLeft) * (GAME.VIEW_WIDTH / cw);
+      cssY = (ly - this.canvas.offsetTop) * (GAME.VIEW_HEIGHT / ch);
+    } else {
+      const rect = this.canvas.getBoundingClientRect();
+      cssX = (e.clientX - rect.left) * (GAME.VIEW_WIDTH / cw);
+      cssY = (e.clientY - rect.top) * (GAME.VIEW_HEIGHT / ch);
+    }
+    return this.camera.screenToWorld(cssX, cssY);
   }
 }
