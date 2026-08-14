@@ -126,6 +126,7 @@ export class Game implements PointerDragTarget {
     this.loop.stop();
     this.input?.dispose();
     window.removeEventListener('resize', this.handleResize);
+    window.removeEventListener('orientationchange', this.handleResize);
     window.visualViewport?.removeEventListener('resize', this.handleResize);
     window.removeEventListener('keydown', this.handleKeydown);
     document.removeEventListener('visibilitychange', this.handleVisibility);
@@ -141,6 +142,7 @@ export class Game implements PointerDragTarget {
     this.debugPanel = new DebugPanel(panelEl, this.debugHooks());
 
     window.addEventListener('resize', this.handleResize);
+    window.addEventListener('orientationchange', this.handleResize);
     window.visualViewport?.addEventListener('resize', this.handleResize);
     window.addEventListener('keydown', this.handleKeydown);
     document.addEventListener('visibilitychange', this.handleVisibility);
@@ -640,8 +642,10 @@ export class Game implements PointerDragTarget {
 
   private handleResize = (): void => {
     if (!this.renderer) return;
-    // 用真实可视区（innerWidth/innerHeight）计算，避免移动端 100vh 含地址栏高度导致显示不全
-    this.renderer.resize(window.innerWidth, window.innerHeight);
+    // 优先用 visualViewport（移动端真实可见区，随地址栏显隐变化），否则退回 innerWidth/innerHeight
+    const w = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+    const h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    this.renderer.resize(w, h);
   };
 
   private handleKeydown = (e: KeyboardEvent): void => {
