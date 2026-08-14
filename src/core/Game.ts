@@ -637,15 +637,10 @@ export class Game implements PointerDragTarget {
     if (!this.renderer) return;
     const container = document.getElementById('game-container');
     if (!container) return;
-    const rect = container.getBoundingClientRect();
-    this.renderer.resize(rect.width, rect.height);
-    const hint = document.getElementById('portrait-hint');
-    if (hint) {
-      hint.classList.toggle(
-        'hidden',
-        !(window.matchMedia('(orientation: portrait)').matches && window.innerWidth < 900),
-      );
-    }
+    // 用布局尺寸（clientWidth/Height）；竖屏旋转后 getBoundingClientRect 是旋转后的视觉包围盒，不能用
+    const w = container.clientWidth || window.innerWidth;
+    const h = container.clientHeight || window.innerHeight;
+    this.renderer.resize(w, h);
   };
 
   private handleKeydown = (e: KeyboardEvent): void => {

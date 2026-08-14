@@ -1,5 +1,6 @@
 /** 指针输入：统一鼠标/触摸/触控笔，只跟踪单个指针，防止多指误操作。 */
 import type { Camera } from '../camera/Camera';
+import { GAME } from '../config/game';
 
 export interface PointerDragTarget {
   /** 命中检测（世界坐标） */
@@ -73,7 +74,14 @@ export class PointerController {
   }
 
   private toWorld(e: PointerEvent): { x: number; y: number } {
+    // 优先用 offsetX/offsetY（相对画布自身局部坐标，旋转后依然正确）；个别环境缺失时退回 rect 方式
     const rect = this.canvas.getBoundingClientRect();
-    return this.camera.screenToWorld(e.clientX - rect.left, e.clientY - rect.top);
+    const cssX = typeof e.offsetX === 'number' ? e.offsetX : e.clientX - rect.left;
+    const cssY = typeof e.offsetY === 'number' ? e.offsetY : e.clientY - rect.top;
+    const cw = this.canvas.clientWidth || rect.width || 1;
+    const ch = this.canvas.clientHeight || rect.height || 1;
+    const sx = cssX * (GAME.VIEW_WIDTH / cw);
+    const sy = cssY * (GAME.VIEW_HEIGHT / ch);
+    return this.camera.screenToWorld(sx, sy);
   }
 }
