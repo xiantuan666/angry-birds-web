@@ -33,12 +33,12 @@ export class Camera {
     };
   }
 
-  /** 平滑跟随目标并带视线前瞻（不锁死）；镜头相对目标下移 30% 视高，避免飞行时上方全是天空 */
+  /** 平滑跟随目标并带视线前瞻（不锁死） */
   follow(x: number, y: number, vx: number, vy: number, smoothing: number): void {
     const lookX = vx * 0.35;
     const lookY = vy * 0.2;
     const tx = x + lookX - this.viewW / (2 * this.zoom);
-    const ty = y + lookY - this.viewH / (2 * this.zoom) + this.viewH * 0.3;
+    const ty = y + lookY - this.viewH / (2 * this.zoom);
     this.x += (tx - this.x) * smoothing;
     this.y += (ty - this.y) * smoothing;
     this.clamp();
