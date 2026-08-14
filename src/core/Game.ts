@@ -355,7 +355,7 @@ export class Game implements PointerDragTarget {
     for (let i = 0; i < 120; i++) this.world.step(GAME.FIXED_TIMESTEP);
     this.world.engine.enableSleeping = true;
 
-    this.camera.snapTo(level.launcher.x + 420, GAME.GROUND_Y);
+    this.camera.snapTo(level.launcher.x + 420, this.snapTargetY());
     this.camera.zoom = 1;
   }
 
@@ -393,7 +393,7 @@ export class Game implements PointerDragTarget {
     this.settleTimer = 0;
     this.completeTimer = 0;
     this.trajectory = [];
-    this.camera.snapTo(this.launcher.anchor.x + 420, GAME.GROUND_Y);
+    this.camera.snapTo(this.launcher.anchor.x + 420, this.snapTargetY());
     this.setState(GameState.AIMING);
     this.refreshHud();
   }
@@ -590,7 +590,7 @@ export class Game implements PointerDragTarget {
     this.ui.showHud(false);
     this.ui.showComplete(score, stars, maxScore);
     this.audio.play('levelComplete');
-    this.camera.snapTo(this.level.world.width / 2, GAME.GROUND_Y);
+    this.camera.snapTo(this.level.world.width / 2, this.snapTargetY());
   }
 
   private failLevel(): void {
@@ -632,6 +632,20 @@ export class Game implements PointerDragTarget {
   }
 
   // ---------- 事件与调试 ----------
+
+  /** 手机/平板检测：主指针为触摸或小屏带触摸 */
+  private isMobile(): boolean {
+    return (
+      window.matchMedia('(pointer: coarse)').matches ||
+      ('ontouchstart' in window && window.innerWidth < 900)
+    );
+  }
+
+  /** 相机取景目标 Y：手机地面在屏幕 70% 处，电脑在 50% 处 */
+  private snapTargetY(): number {
+    const ratio = this.isMobile() ? 0.7 : 0.5;
+    return GAME.GROUND_Y - GAME.VIEW_HEIGHT * ratio + GAME.VIEW_HEIGHT / 2;
+  }
 
   private handleResize = (): void => {
     if (!this.renderer) return;
