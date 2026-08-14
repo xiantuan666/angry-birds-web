@@ -104,6 +104,7 @@ export class Game implements PointerDragTarget {
       this.audio.play('explosion');
       this.camera.shake(16);
     });
+    this.bus.on('TARGET_DESTROYED', () => this.ui.showReward());
     this.bus.on('EGG_IMPACT', (p) => {
       if (this.explosion) {
         this.explosion.apply(
@@ -304,6 +305,7 @@ export class Game implements PointerDragTarget {
         this.ui.showHud(true);
         this.setState(GameState.AIMING);
         this.refreshHud();
+        if (this.level) this.ui.showBirdPreview(this.level.projectiles);
       } catch (e) {
         console.error('关卡加载失败', e);
         this.toMenu();

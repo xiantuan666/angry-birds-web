@@ -2,11 +2,15 @@ import { describe, it, expect } from 'vitest';
 import { level01 } from '../src/levels/level01';
 import { level02 } from '../src/levels/level02';
 import { level03 } from '../src/levels/level03';
+import { level04 } from '../src/levels/level04';
+import { level05 } from '../src/levels/level05';
+import { level06 } from '../src/levels/level06';
+import { level07 } from '../src/levels/level07';
 import { CHARACTERS, TARGETS } from '../src/config/characters';
 import { MATERIALS } from '../src/config/physics';
 import { GAME } from '../src/config/game';
 
-const LEVELS = [level01, level02, level03];
+const LEVELS = [level01, level02, level03, level04, level05, level06, level07];
 
 describe('关卡数据合法性', () => {
   it('各关卡角色配置存在', () => {

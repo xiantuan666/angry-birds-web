@@ -1,5 +1,6 @@
 /** UI 管理：DOM 屏幕切换、HUD、关卡选择、结算、设置。 */
 import type { SaveSystem, Settings } from '../save/SaveSystem';
+import { CHARACTERS } from '../config/characters';
 import { LEVEL_COUNT } from '../levels/LevelManager';
 
 export type UIAction =
@@ -181,5 +182,49 @@ export class UIManager {
 
   showSettingsScreen(): void {
     this.showScreen('settings');
+  }
+
+  private rewardTimer: number | null = null;
+  private birdPreviewTimer: number | null = null;
+
+  /** 小鸟预告：显示本关可用小鸟（你的贴图），2.3 秒后自动关闭 */
+  showBirdPreview(ids: string[]): void {
+    const el = byId('bird-preview');
+    const list = byId('bird-preview-list');
+    if (!el || !list) return;
+    list.innerHTML = '';
+    for (const id of ids) {
+      const cfg = CHARACTERS[id];
+      if (!cfg) continue;
+      const img = document.createElement('img');
+      img.src = cfg.sprite;
+      img.alt = cfg.name;
+      img.title = cfg.name;
+      list.appendChild(img);
+    }
+    el.classList.remove('hidden', 'show');
+    void el.offsetWidth; // 重启动画
+    el.classList.add('show');
+    if (this.birdPreviewTimer !== null) window.clearTimeout(this.birdPreviewTimer);
+    this.birdPreviewTimer = window.setTimeout(() => {
+      el.classList.add('hidden');
+      el.classList.remove('show');
+      this.birdPreviewTimer = null;
+    }, 2350);
+  }
+
+  /** 击杀奖励横幅：显示 2 秒后自动关闭（不拦截操作） */
+  showReward(): void {
+    const el = byId('reward-banner');
+    if (!el) return;
+    el.classList.remove('hidden', 'show');
+    void el.offsetWidth; // 重启动画
+    el.classList.add('show');
+    if (this.rewardTimer !== null) window.clearTimeout(this.rewardTimer);
+    this.rewardTimer = window.setTimeout(() => {
+      el.classList.add('hidden');
+      el.classList.remove('show');
+      this.rewardTimer = null;
+    }, 2050);
   }
 }

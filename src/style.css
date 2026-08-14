@@ -312,6 +312,75 @@ body {
   flex: 1;
 }
 
+/* 小鸟预告 */
+#bird-preview {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(15, 22, 30, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 16px;
+  padding: 14px 22px;
+  z-index: 46;
+  pointer-events: none;
+  text-align: center;
+}
+#bird-preview .bird-preview-label {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #ffd54f;
+}
+#bird-preview-list {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+#bird-preview-list img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+}
+#bird-preview.show {
+  animation: bird-preview-pop 2.3s ease forwards;
+}
+@keyframes bird-preview-pop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+  10% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  82% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.92); }
+}
+
+/* 击杀奖励横幅 */
+#reward-banner {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 45;
+  pointer-events: none;
+}
+#reward-banner img {
+  width: 220px;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  border: 3px solid rgba(255, 255, 255, 0.75);
+  opacity: 0.94;
+}
+#reward-banner.show {
+  animation: reward-pop 2s ease forwards;
+}
+@keyframes reward-pop {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.7); }
+  12% { opacity: 0.94; transform: translateX(-50%) scale(1.05); }
+  18% { transform: translateX(-50%) scale(1); }
+  82% { opacity: 0.94; transform: translateX(-50%) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) scale(0.95); }
+}
+
 /* 横屏提示 */
 #portrait-hint {
   position: absolute;
