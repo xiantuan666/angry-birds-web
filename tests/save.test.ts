@@ -46,22 +46,4 @@ describe('SaveSystem 存档', () => {
     expect(save2.getSettings().musicVolume).toBe(0.7);
     expect(save2.getSettings().sfxVolume).toBe(1);
   });
-
-  it('屏幕缩放默认 1 且可持久化', () => {
-    const save = new SaveSystem(new MemoryStorage());
-    expect(save.getSettings().screenScale).toBe(1);
-    const storage = new MemoryStorage();
-    const s1 = new SaveSystem(storage);
-    s1.setSettings({ screenScale: 1.3 });
-    const s2 = new SaveSystem(storage);
-    expect(s2.getSettings().screenScale).toBe(1.3);
-  });
-
-  it('旧存档缺少 screenScale 时自动补默认 1', () => {
-    const storage = new MemoryStorage();
-    storage.setItem('game_save', JSON.stringify({ unlockedLevels: [1], settings: { masterVolume: 0.5 } }));
-    const save = new SaveSystem(storage);
-    expect(save.getSettings().screenScale).toBe(1);
-    expect(save.getSettings().masterVolume).toBe(0.5);
-  });
 });

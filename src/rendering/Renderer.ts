@@ -27,12 +27,6 @@ export class Renderer {
   private dpr = 1;
   private viewW = GAME.VIEW_WIDTH;
   private viewH = GAME.VIEW_HEIGHT;
-  /** 屏幕缩放（0.5~1.5），放大=画面变大并裁剪边缘，缩小=留黑边 */
-  private screenScale = 1;
-
-  setScreenScale(v: number): void {
-    this.screenScale = v;
-  }
 
   /** 生成/复用平铺纹理图案（按 BLOCK_TILE 等比缩放居中裁切，避免拉伸变形） */
   private getBlockPattern(img: HTMLImageElement): CanvasPattern | null {
@@ -65,7 +59,7 @@ export class Renderer {
   /** 适配容器尺寸（保持 1280x720 逻辑分辨率，letterbox 居中） */
   resize(containerW: number, containerH: number): void {
     this.dpr = window.devicePixelRatio || 1;
-    const scale = Math.min(containerW / GAME.VIEW_WIDTH, containerH / GAME.VIEW_HEIGHT) * this.screenScale;
+    const scale = Math.min(containerW / GAME.VIEW_WIDTH, containerH / GAME.VIEW_HEIGHT);
     const w = Math.max(1, Math.floor(GAME.VIEW_WIDTH * scale));
     const h = Math.max(1, Math.floor(GAME.VIEW_HEIGHT * scale));
     this.canvas.style.width = `${w}px`;

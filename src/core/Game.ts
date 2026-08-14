@@ -126,8 +126,6 @@ export class Game implements PointerDragTarget {
     this.loop.stop();
     this.input?.dispose();
     window.removeEventListener('resize', this.handleResize);
-    window.removeEventListener('orientationchange', this.handleResize);
-    window.visualViewport?.removeEventListener('resize', this.handleResize);
     window.removeEventListener('keydown', this.handleKeydown);
     document.removeEventListener('visibilitychange', this.handleVisibility);
     this.unloadLevel();
@@ -142,11 +140,8 @@ export class Game implements PointerDragTarget {
     this.debugPanel = new DebugPanel(panelEl, this.debugHooks());
 
     window.addEventListener('resize', this.handleResize);
-    window.addEventListener('orientationchange', this.handleResize);
-    window.visualViewport?.addEventListener('resize', this.handleResize);
     window.addEventListener('keydown', this.handleKeydown);
     document.addEventListener('visibilitychange', this.handleVisibility);
-    this.renderer.setScreenScale(this.save.getSettings().screenScale);
     this.handleResize();
 
     this.loop.onStep = (dt) => this.update(dt);
@@ -171,8 +166,6 @@ export class Game implements PointerDragTarget {
       this.audio.setMasterVolume(settings.masterVolume);
       this.audio.setMusicVolume(settings.musicVolume);
       this.audio.setSfxVolume(settings.sfxVolume);
-      this.renderer?.setScreenScale(settings.screenScale);
-      this.handleResize();
     });
     const s = this.save.getSettings();
     this.ui.applySettings(s);
@@ -642,16 +635,17 @@ export class Game implements PointerDragTarget {
 
   private handleResize = (): void => {
     if (!this.renderer) return;
-    // 优先用 visualViewport（移动端真实可见区，随地址栏显隐变化），否则退回 innerWidth/innerHeight
-    const w = window.visualViewport ? window.visualViewport.width : window.innerWidth;
-    const h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    // 关键：把容器也钉到真实可见区，避免容器按布局视口（含地址栏区域）偏大导致画布底部被裁（看不到地面）
     const container = document.getElementById('game-container');
-    if (container) {
-      container.style.width = `${w}px`;
-      container.style.height = `${h}px`;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    this.renderer.resize(rect.width, rect.height);
+    const hint = document.getElementById('portrait-hint');
+    if (hint) {
+      hint.classList.toggle(
+        'hidden',
+        !(window.matchMedia('(orientation: portrait)').matches && window.innerWidth < 900),
+      );
     }
-    this.renderer.resize(w, h);
   };
 
   private handleKeydown = (e: KeyboardEvent): void => {

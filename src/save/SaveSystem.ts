@@ -4,8 +4,6 @@ export interface Settings {
   masterVolume: number;
   musicVolume: number;
   sfxVolume: number;
-  /** 屏幕缩放（0.5~1.5，默认 1） */
-  screenScale: number;
 }
 
 export interface SaveData {
@@ -17,7 +15,7 @@ export interface SaveData {
 
 const KEY = 'game_save';
 
-const DEFAULT_SETTINGS: Settings = { masterVolume: 0.8, musicVolume: 0.7, sfxVolume: 1, screenScale: 1 };
+const DEFAULT_SETTINGS: Settings = { masterVolume: 0.8, musicVolume: 0.7, sfxVolume: 1 };
 
 const DEFAULT_DATA: SaveData = {
   unlockedLevels: [1],
