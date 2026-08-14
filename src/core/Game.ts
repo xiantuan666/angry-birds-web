@@ -176,6 +176,7 @@ export class Game implements PointerDragTarget {
   private handleAction(action: UIAction): void {
     this.audio.unlock();
     this.audio.play('button');
+    this.audio.playMusic(); // 首次用户交互后播放背景音乐（幂等）
     switch (action) {
       case 'play': this.startFirstUnlocked(); break;
       case 'levels': this.showLevelSelect(); break;

@@ -44,7 +44,7 @@ export type AssetKind = keyof typeof ASSETS;
 
 /** 音频资源路径（AudioManager 使用） */
 export const AUDIO_KEYS = {
-  music: '/assets/audio/music.wav',
+  music: '/assets/audio/music.mp4',
   launch: ['/assets/audio/launch-1.wav', '/assets/audio/launch-2.wav'],
   /** 相似碰撞音效随机选择 */
   collision: [
