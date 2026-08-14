@@ -74,10 +74,16 @@ export class PointerController {
   }
 
   private toWorld(e: PointerEvent): { x: number; y: number } {
+    // 优先用 offsetX/offsetY（相对画布自身的坐标），不受容器/visualViewport 偏移影响；
+    // 个别环境缺失时退回 clientX - rect 方式
     const rect = this.canvas.getBoundingClientRect();
-    // 画布 CSS 尺寸可能 ≠ 逻辑 1280x720（缩放/手机适配），需换算为逻辑坐标
-    const sx = (e.clientX - rect.left) * (GAME.VIEW_WIDTH / rect.width);
-    const sy = (e.clientY - rect.top) * (GAME.VIEW_HEIGHT / rect.height);
+    const cssX = typeof e.offsetX === 'number' ? e.offsetX : e.clientX - rect.left;
+    const cssY = typeof e.offsetY === 'number' ? e.offsetY : e.clientY - rect.top;
+    const cw = this.canvas.clientWidth || rect.width || 1;
+    const ch = this.canvas.clientHeight || rect.height || 1;
+    // 画布 CSS 尺寸可能 ≠ 逻辑 1280x720（缩放/手机适配），换算为逻辑坐标
+    const sx = cssX * (GAME.VIEW_WIDTH / cw);
+    const sy = cssY * (GAME.VIEW_HEIGHT / ch);
     return this.camera.screenToWorld(sx, sy);
   }
 }
