@@ -1,0 +1,12 @@
+# Render 静态站点蓝图：连接该仓库后自动识别并部署
+# 也可在 Render 控制台手动配置：Build Command / Publish Directory 如下
+services:
+  - type: web
+    name: angry-birds-yimen
+    runtime: static
+    buildCommand: npx --yes pnpm@11 install --frozen-lockfile && npx --yes pnpm@11 build
+    staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: true
+    envVars:
+      - key: NODE_VERSION
+        value: 22

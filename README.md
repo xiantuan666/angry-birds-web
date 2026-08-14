@@ -136,3 +136,21 @@ pnpm build   # 严格类型检查（tsc --noEmit）+ 生产构建，必须零错
 ```
 
 Playwright 冒烟测试（截图见 `screenshots/`）验证：加载 → 主菜单 → 进入关卡 → 拖拽发射 → 飞行 → 碰撞 → 稳定 → 下一只/结算，全程无控制台错误。
+
+
+## 部署到 Render（托管网页）
+
+项目已内置 `render.yaml`（Render 静态站点蓝图），并在 GitHub 托管。
+
+**首次部署（Render 控制台）**：
+1. 把本仓库推送到 GitHub（`git push -u origin main`）。
+2. 打开 [render.com](https://render.com) → New → Static Site。
+3. Connect 你的 GitHub 仓库。
+4. 若仓库根目录有 `render.yaml`，Render 会自动按蓝图配置；否则手动填写：
+   - **Build Command**：`npx --yes pnpm@11 install --frozen-lockfile && npx --yes pnpm@11 build`
+   - **Publish Directory**：`dist`
+5. Deploy 即可，之后每次 push 自动重新部署。
+
+**本地构建验证**：`pnpm build`（产物在 `dist/`）。
+
+> 注意：`.npmrc`（本机 D 盘 store 配置）已从仓库移除，不影响 Render 构建；本地仍会读取磁盘上的 `.npmrc`。
