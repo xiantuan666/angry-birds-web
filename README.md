@@ -22,10 +22,10 @@ pnpm preview        # 本地预览构建产物
 ## 本轮已实现
 
 - 完整状态机：MENU / LEVEL_SELECT / LOADING / AIMING / LAUNCHING / FLYING / SETTLING / NEXT_PROJECTILE / LEVEL_COMPLETE / LEVEL_FAILED / PAUSED
-- 真实物理（Matter.js）：固定时间步长、睡眠机制、碰撞分类、越界清理、稳定检测
+- 真实物理（Matter.js）：固定时间步长、睡眠机制、碰撞分类、越界清理、稳定检测、支撑丢失检测（失去支撑必倒）、猪坠落即摧毁得分
 - 拖拽发射：Pointer Events（鼠标/触摸/触控笔）、拉弓限位、弹射公式、瞄准轨迹（含空气阻力预测）、低速放回不消耗
 - 碰撞伤害与破坏：伤害 = 冲击速度 × 攻击者质量 × 材质倍率，低速接触无伤害；目标死亡流程；连锁坍塌由物理自然产生
-- 角色队列与结算：按关卡顺序使用角色、剩余角色奖励、连击、星级（每关阈值）、失败/通关界面
+- 角色队列与结算：按关卡顺序使用角色（第 1 关 6 只混合鸟）、剩余角色奖励、连击、百分比星级（30% 一星 / 60% 二星 / 80% 三星）、失败/通关界面
 - 存档：LocalStorage（key `game_save`）保存解锁关卡 / 最高分 / 星级 / 音量设置，通关解锁下一关
 - UI：主菜单、关卡选择（★/🔒）、HUD、暂停（ESC）、设置（主音量/音乐/音效）、全屏、竖屏提示
 - 粒子与反馈：木屑/石屑/玻璃碎片/尘土、碰撞闪光、按力度分级的镜头震动、分数飘字、星级弹出动画
@@ -101,7 +101,7 @@ myCharacter: {
 ### 如何创建关卡
 
 在 `src/levels/` 新建 `levelXX.ts`，按 `LevelConfig` 结构编写数据
-（launcher/projectiles/targets/blocks/starThresholds），再到 `src/levels/LevelManager.ts` 的 `LEVELS` 中注册：
+（launcher/projectiles/targets/blocks），再到 `src/levels/LevelManager.ts` 的 `LEVELS` 中注册：
 
 ```typescript
 import { level02 } from './level02';

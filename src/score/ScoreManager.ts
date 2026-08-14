@@ -1,5 +1,8 @@
-/** 计分管理：连击、星级（阈值来自关卡数据，不写死在管理器）。 */
+/** 计分管理：连击、百分比星级、关卡满分（数据驱动）。 */
 import { SCORE } from '../config/score';
+import { TARGETS } from '../config/characters';
+import { MATERIALS } from '../config/physics';
+import type { LevelConfig } from '../levels/Level';
 
 export class ScoreManager {
   private score = 0;
@@ -40,11 +43,25 @@ export class ScoreManager {
     this.score += points;
   }
 
-  /** 根据关卡阈值计算星级（0~3） */
-  static calculateStars(score: number, thresholds: [number, number, number]): number {
-    if (score >= thresholds[2]) return 3;
-    if (score >= thresholds[1]) return 2;
-    if (score >= thresholds[0]) return 1;
+  /** 百分比星级：≥80% 三星 / ≥60% 二星 / ≥30% 一星 / 否则 0 星 */
+  static calculateStarsByPercent(score: number, maxScore: number): number {
+    if (maxScore <= 0) return score > 0 ? 3 : 0;
+    const ratio = score / maxScore;
+    if (ratio >= SCORE.STAR_THREE) return 3;
+    if (ratio >= SCORE.STAR_TWO) return 2;
+    if (ratio >= SCORE.STAR_ONE) return 1;
     return 0;
+  }
+
+  /** 关卡满分 = 全部猪 scoreValue + 全部方块材质 score */
+  static calculateLevelMaxScore(level: LevelConfig): number {
+    let total = 0;
+    for (const t of level.targets) {
+      total += TARGETS[t.type]?.scoreValue ?? 0;
+    }
+    for (const b of level.blocks) {
+      total += MATERIALS[b.material as keyof typeof MATERIALS]?.score ?? 0;
+    }
+    return total;
   }
 }

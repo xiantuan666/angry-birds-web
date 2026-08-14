@@ -25,15 +25,12 @@ describe('关卡数据合法性', () => {
     }
   });
 
-  it('星级阈值严格递增', () => {
-    const [a, b, c] = level01.starThresholds;
-    expect(a).toBeLessThan(b);
-    expect(b).toBeLessThan(c);
-  });
-
-  it('至少 2 目标 / 5 方块 / 3 角色', () => {
+  it('至少 2 目标 / 5 方块 / 3 角色，且本轮为 6 只混合鸟', () => {
     expect(level01.targets.length).toBeGreaterThanOrEqual(2);
     expect(level01.blocks.length).toBeGreaterThanOrEqual(5);
     expect(level01.projectiles.length).toBeGreaterThanOrEqual(3);
+    expect(level01.projectiles.length).toBe(6);
+    expect(level01.projectiles).toContain('yellow');
+    expect(level01.projectiles).toContain('blue');
   });
 });

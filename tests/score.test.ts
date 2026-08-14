@@ -1,6 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { ScoreManager } from '../src/score/ScoreManager';
 import { SCORE } from '../src/config/score';
+import { level01 } from '../src/levels/level01';
+import { TARGETS } from '../src/config/characters';
+import { MATERIALS } from '../src/config/physics';
 
 describe('ScoreManager 计分', () => {
   it('重置后得分为 0', () => {
@@ -25,7 +28,6 @@ describe('ScoreManager 计分', () => {
     expect(p3).toBe(150);
     expect(p4).toBe(175);
     expect(p5).toBe(200);
-    // 连击 9 次到达封顶 3.0 倍
     const s2 = new ScoreManager();
     let last = 0;
     for (let i = 0; i < 9; i++) {
@@ -46,11 +48,27 @@ describe('ScoreManager 计分', () => {
     vi.useRealTimers();
   });
 
-  it('星级按关卡阈值计算', () => {
-    const t: [number, number, number] = [2000, 3200, 4500];
-    expect(ScoreManager.calculateStars(1000, t)).toBe(0);
-    expect(ScoreManager.calculateStars(2000, t)).toBe(1);
-    expect(ScoreManager.calculateStars(3200, t)).toBe(2);
-    expect(ScoreManager.calculateStars(4500, t)).toBe(3);
+  it('百分比星级边界（30/60/80）', () => {
+    expect(ScoreManager.calculateStarsByPercent(0, 1000)).toBe(0);
+    expect(ScoreManager.calculateStarsByPercent(299, 1000)).toBe(0);
+    expect(ScoreManager.calculateStarsByPercent(300, 1000)).toBe(1);
+    expect(ScoreManager.calculateStarsByPercent(599, 1000)).toBe(1);
+    expect(ScoreManager.calculateStarsByPercent(600, 1000)).toBe(2);
+    expect(ScoreManager.calculateStarsByPercent(799, 1000)).toBe(2);
+    expect(ScoreManager.calculateStarsByPercent(800, 1000)).toBe(3);
+    expect(ScoreManager.calculateStarsByPercent(1000, 1000)).toBe(3);
+  });
+
+  it('满分为 0 时按有分即三星兜底', () => {
+    expect(ScoreManager.calculateStarsByPercent(0, 0)).toBe(0);
+    expect(ScoreManager.calculateStarsByPercent(500, 0)).toBe(3);
+  });
+
+  it('关卡满分 = 全部猪 + 全部方块', () => {
+    const max = ScoreManager.calculateLevelMaxScore(level01);
+    const targetsTotal = level01.targets.reduce((s, t) => s + (TARGETS[t.type]?.scoreValue ?? 0), 0);
+    const blocksTotal = level01.blocks.reduce((s, b) => s + (MATERIALS[b.material as keyof typeof MATERIALS]?.score ?? 0), 0);
+    expect(max).toBe(targetsTotal + blocksTotal);
+    expect(max).toBeGreaterThan(0);
   });
 });

@@ -8,6 +8,7 @@ import { GameLoop } from './GameLoop';
 import { EventBus } from './EventBus';
 import { PhysicsWorld } from '../physics/PhysicsWorld';
 import { CollisionManager } from '../physics/CollisionManager';
+import { SupportSystem } from '../physics/SupportSystem';
 import { DestructionSystem } from '../physics/DestructionSystem';
 import { EntityFactory } from '../entities/EntityFactory';
 import type { Entity } from '../entities/Entity';
@@ -49,6 +50,7 @@ export class Game implements PointerDragTarget {
   private renderer!: Renderer;
   private world!: PhysicsWorld;
   private collision!: CollisionManager;
+  private support!: SupportSystem;
   private factory!: EntityFactory;
   private input!: PointerController;
   private debugPanel!: DebugPanel;
@@ -203,6 +205,9 @@ export class Game implements PointerDragTarget {
       if (this.state === GameState.FLYING || this.state === GameState.SETTLING) {
         this.handleFlight(dt);
       }
+      // 支撑丢失检测 + 猪坠落判定（保证失去支撑必倒、坠落得分）
+      this.support.wakeUnsupported(this.entities);
+      this.support.checkFallenTargets(this.targets, this.bus);
     }
 
     this.cleanupPending();
@@ -284,6 +289,7 @@ export class Game implements PointerDragTarget {
     this.world = new PhysicsWorld();
     this.collision = new CollisionManager(this.bus);
     this.collision.attach(this.world.engine);
+    this.support = new SupportSystem(this.world);
     this.factory = new EntityFactory(this.resolver);
 
     this.entities.length = 0;
@@ -539,12 +545,13 @@ export class Game implements PointerDragTarget {
     const remaining = this.remainingProjectiles();
     if (remaining > 0) this.score.addBonus(remaining * SCORE.remainingProjectile);
     const score = this.score.getScore();
-    const stars = ScoreManager.calculateStars(score, this.level.starThresholds);
+    const maxScore = ScoreManager.calculateLevelMaxScore(this.level);
+    const stars = ScoreManager.calculateStarsByPercent(score, maxScore);
     this.save.recordResult(this.level.id, score, stars);
     this.bus.emit('LEVEL_COMPLETE', { levelId: this.level.id, score, stars });
     this.setState(GameState.LEVEL_COMPLETE);
     this.ui.showHud(false);
-    this.ui.showComplete(score, stars);
+    this.ui.showComplete(score, stars, maxScore);
     this.audio.play('levelComplete');
     this.camera.snapTo(this.level.world.width / 2, GAME.GROUND_Y - 120);
   }

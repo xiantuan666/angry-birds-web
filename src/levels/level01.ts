@@ -9,7 +9,7 @@ export const level01: LevelConfig = {
   name: '第一关 · 初试身手',
   world: { width: GAME.WORLD_WIDTH, height: GAME.WORLD_HEIGHT },
   launcher: { x: 200, y: GY - GAME.LAUNCHER_HEIGHT },
-  projectiles: ['red', 'red', 'red'],
+  projectiles: ['red', 'red', 'red', 'yellow', 'yellow', 'blue'],
   targets: [
     { type: 'basic', x: 1050, y: GY - 22 },
     { type: 'basic', x: 1050, y: 768 },
@@ -23,5 +23,4 @@ export const level01: LevelConfig = {
     { material: 'wood', x: 1500, y: GY - 40, width: 26, height: 80 },
     { material: 'wood', x: 1450, y: 870, width: 130, height: 24 },
   ],
-  starThresholds: [2000, 3000, 4200],
 };

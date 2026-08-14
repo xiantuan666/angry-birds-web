@@ -24,5 +24,4 @@ export interface LevelConfig {
   projectiles: string[];
   targets: TargetSpawn[];
   blocks: BlockSpawn[];
-  starThresholds: [number, number, number];
 }

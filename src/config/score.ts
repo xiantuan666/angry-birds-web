@@ -13,4 +13,8 @@ export const SCORE = {
   /** 连击乘数 = 1 + comboStep × (combo - 1)，封顶 comboCap */
   comboStep: 0.25,
   comboCap: 3,
+  /** 百分比星级阈值：≥STAR_ONE 一星 / ≥STAR_TWO 二星 / ≥STAR_THREE 三星 */
+  STAR_ONE: 0.3,
+  STAR_TWO: 0.6,
+  STAR_THREE: 0.8,
 } as const;

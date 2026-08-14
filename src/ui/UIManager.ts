@@ -137,9 +137,12 @@ export class UIManager {
     }
   }
 
-  showComplete(score: number, stars: number): void {
+  showComplete(score: number, stars: number, maxScore: number): void {
     const scoreEl = byId('complete-score');
-    if (scoreEl) scoreEl.textContent = String(score);
+    if (scoreEl) {
+      const pct = maxScore > 0 ? Math.round((score / maxScore) * 100) : 100;
+      scoreEl.textContent = `得分 ${score} / 满分 ${maxScore}（${pct}%）`;
+    }
     const starsEl = byId('complete-stars');
     if (starsEl) {
       starsEl.innerHTML = '';

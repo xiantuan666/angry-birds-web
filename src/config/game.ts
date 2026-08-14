@@ -35,6 +35,10 @@ export const GAME = {
   SETTLE_DURATION_MS: 1000,
   /** 目标全部消灭后等待坍塌结算的延迟（毫秒） */
   LEVEL_COMPLETE_DELAY_MS: 1500,
+  /** 猪判定为“坠落”的向下位移阈值（世界单位），超阈值即摧毁并得分 */
+  FALL_DISTANCE: 30,
+  /** 支撑探测容差（世界单位）：支撑面在实体底部下方不超过该值视为有支撑 */
+  SUPPORT_GAP: 4,
   /** 越界清理边界 */
   BOUNDS: { minX: -1000, maxX: 5000, maxY: 3000 },
   /** 碎片刚体数量上限 */
