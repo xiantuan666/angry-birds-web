@@ -409,22 +409,18 @@ body {
   100% { opacity: 0; transform: translateX(-50%) scale(0.95); }
 }
 
-/* 竖屏自动旋转 90° 成横屏：把游戏界面整体旋转并铺满竖屏 */
-@media (orientation: portrait) {
-  #game-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 100vh;
-    width: 100dvh;
-    height: 100vw;
-    height: 100dvw;
-    margin-left: calc(-100vh / 2);
-    margin-left: calc(-100dvh / 2);
-    margin-top: calc(-100vw / 2);
-    margin-top: calc(-100dvw / 2);
-    transform: rotate(90deg);
-  }
+/* 横屏提示 */
+#portrait-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  pointer-events: auto;
+  z-index: 60;
 }
 
 /* Debug 面板 */

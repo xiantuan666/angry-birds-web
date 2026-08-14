@@ -1,9 +1,7 @@
-/** 指针输入：统一鼠标/触摸/触控笔，只跟踪单个指针，防止多指误操作。 */
 import type { Camera } from '../camera/Camera';
-import { GAME } from '../config/game';
 
 export interface PointerDragTarget {
-  /** 命中检测（世界坐标） */
+  /** 命中检测（世界坐标）：是否可拖拽 */
   hitTest(wx: number, wy: number): boolean;
   onDragStart(wx: number, wy: number): void;
   onDragMove(wx: number, wy: number): void;
@@ -31,9 +29,9 @@ export class PointerController {
     this.canvas.removeEventListener('pointercancel', this.onUp);
   }
 
-  setTarget(target: PointerDragTarget | null): void {
-    this.target = target;
-    if (!target) this.reset();
+  setTarget(t: PointerDragTarget | null): void {
+    this.target = t;
+    if (!t) this.reset();
   }
 
   private readonly onDown = (e: PointerEvent): void => {
@@ -46,11 +44,10 @@ export class PointerController {
       try {
         this.canvas.setPointerCapture(e.pointerId);
       } catch {
-        // 某些环境不支持指针捕获，忽略
+        // 忽略
       }
       e.preventDefault();
     } else if (this.onTap) {
-      // 未命中拖拽目标 → 视为点击（能力触发）
       this.onTap(w.x, w.y);
     }
   };
@@ -74,22 +71,7 @@ export class PointerController {
   }
 
   private toWorld(e: PointerEvent): { x: number; y: number } {
-    // 统一用 clientX/clientY（所有浏览器/触摸都可靠），竖屏旋转时按精确公式逆旋转回画布局部坐标
-    const cw = this.canvas.clientWidth || 1;
-    const ch = this.canvas.clientHeight || 1;
-    let cssX: number;
-    let cssY: number;
-    if (window.matchMedia('(orientation: portrait)').matches) {
-      // 竖屏：容器旋转 90°，视觉(x,y) → 容器局部(lx,ly)：lx = y, ly = 视口宽 - x
-      const lx = e.clientY;
-      const ly = window.innerWidth - e.clientX;
-      cssX = (lx - this.canvas.offsetLeft) * (GAME.VIEW_WIDTH / cw);
-      cssY = (ly - this.canvas.offsetTop) * (GAME.VIEW_HEIGHT / ch);
-    } else {
-      const rect = this.canvas.getBoundingClientRect();
-      cssX = (e.clientX - rect.left) * (GAME.VIEW_WIDTH / cw);
-      cssY = (e.clientY - rect.top) * (GAME.VIEW_HEIGHT / ch);
-    }
-    return this.camera.screenToWorld(cssX, cssY);
+    const rect = this.canvas.getBoundingClientRect();
+    return this.camera.screenToWorld(e.clientX - rect.left, e.clientY - rect.top);
   }
 }
