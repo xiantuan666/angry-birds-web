@@ -5,9 +5,9 @@
 export const GAME = {
   /** 版本号（主界面显示；每次更新递增） */
   VERSION: '1.7.0',
-  /** 世界尺寸（世界坐标） */
+  /** 世界尺寸（世界坐标）——高度加大，允许手机相机下探到地面 30% */
   WORLD_WIDTH: 3000,
-  WORLD_HEIGHT: 1200,
+  WORLD_HEIGHT: 1400,
   /** 逻辑分辨率（CSS 像素），Canvas 内部始终按此绘制 */
   VIEW_WIDTH: 1280,
   VIEW_HEIGHT: 720,

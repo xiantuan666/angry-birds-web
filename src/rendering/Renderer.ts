@@ -141,12 +141,12 @@ export class Renderer {
   private drawGround(): void {
     const ctx = this.ctx;
     const gy = GAME.GROUND_Y;
-    const grad = ctx.createLinearGradient(0, gy, 0, gy + 320);
+    const grad = ctx.createLinearGradient(0, gy, 0, GAME.WORLD_HEIGHT);
     grad.addColorStop(0, '#8bc34a');
     grad.addColorStop(0.18, '#6d9a35');
     grad.addColorStop(1, '#5c3a1e');
     ctx.fillStyle = grad;
-    ctx.fillRect(0, gy, GAME.WORLD_WIDTH, 500);
+    ctx.fillRect(0, gy, GAME.WORLD_WIDTH, GAME.WORLD_HEIGHT - gy);
     ctx.fillStyle = '#a5d66a';
     ctx.fillRect(0, gy, GAME.WORLD_WIDTH, 12);
     ctx.strokeStyle = 'rgba(0,0,0,0.08)';
