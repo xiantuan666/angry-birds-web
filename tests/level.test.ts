@@ -25,12 +25,14 @@ describe('关卡数据合法性', () => {
     }
   });
 
-  it('至少 2 目标 / 5 方块 / 3 角色，且本轮为 6 只混合鸟', () => {
+  it('至少 2 目标 / 5 方块，第 1 关为 6 只含黑白的混合鸟', () => {
     expect(level01.targets.length).toBeGreaterThanOrEqual(2);
     expect(level01.blocks.length).toBeGreaterThanOrEqual(5);
-    expect(level01.projectiles.length).toBeGreaterThanOrEqual(3);
     expect(level01.projectiles.length).toBe(6);
+    expect(level01.projectiles).toContain('red');
     expect(level01.projectiles).toContain('yellow');
     expect(level01.projectiles).toContain('blue');
+    expect(level01.projectiles).toContain('black');
+    expect(level01.projectiles).toContain('white');
   });
 });

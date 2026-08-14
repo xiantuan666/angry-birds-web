@@ -10,6 +10,7 @@ export interface GameEventMap {
   BLOCK_DAMAGED: { entityId: string; health: number; impactSpeed: number };
   BLOCK_DESTROYED: { entityId: string; x: number; y: number; material: string; score: number };
   EXPLOSION: { x: number; y: number; radius: number };
+  EGG_IMPACT: { x: number; y: number };
   LEVEL_COMPLETE: { levelId: number; score: number; stars: number };
   LEVEL_FAILED: { levelId: number };
   STATE_CHANGED: { from: GameState; to: GameState };

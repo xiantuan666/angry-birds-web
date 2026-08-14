@@ -197,6 +197,20 @@ export class Renderer {
     if (e.type === 'projectile' || e.type === 'target') {
       const ent = e as Projectile | Target;
       const radius = ent.config.radius;
+      // 蛋：白鸟下蛋，画成椭圆
+      if ((e.body.plugin as { isEgg?: boolean } | undefined)?.isEgg) {
+        ctx.save();
+        ctx.translate(pos.x, pos.y);
+        ctx.fillStyle = '#f6efe4';
+        ctx.strokeStyle = '#c9b89a';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, radius * 0.9, radius * 1.25, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+        return;
+      }
       const img = this.assets.get(ent.sprite);
       ctx.save();
       ctx.translate(pos.x, pos.y);

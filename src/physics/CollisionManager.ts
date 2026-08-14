@@ -2,7 +2,7 @@
 import Matter from 'matter-js';
 import { EventBus } from '../core/EventBus';
 import { calculateDamage, type ImpactInfo } from './DamageSystem';
-import { bodyEntityId, bodyEntityType, MATERIALS } from '../config/physics';
+import { bodyEntityId, bodyEntityType, bodyIsEgg, MATERIALS } from '../config/physics';
 import type { Entity } from '../entities/Entity';
 import type { Target } from '../entities/Target';
 import type { Block } from '../entities/Block';
@@ -59,6 +59,21 @@ export class CollisionManager {
     if (!ea || !eb || !ea.active || !eb.active) return;
 
     const impactSpeed = Math.abs(Matter.Vector.magnitude(Matter.Vector.sub(a.velocity, b.velocity)));
+
+    // 蛋体碰撞 → 爆炸（白鸟下蛋）
+    if (impactSpeed > 0.3) {
+      const eggBody = bodyIsEgg(a) ? a : bodyIsEgg(b) ? b : null;
+      if (eggBody) {
+        const eggId = bodyEntityId(eggBody);
+        const egg = eggId ? this.entities.get(eggId) : undefined;
+        if (egg && egg.active && !egg.destroyed) {
+          this.bus.emit('EGG_IMPACT', { x: eggBody.position.x, y: eggBody.position.y });
+          egg.destroy();
+          egg.markForRemoval();
+        }
+        return;
+      }
+    }
 
     // 角色碰撞反馈（震动/音效），即使不造成伤害
     const projectile = aType === 'projectile' ? ea : bType === 'projectile' ? eb : null;

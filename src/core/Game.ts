@@ -3,12 +3,15 @@ import Matter from 'matter-js';
 import { GAME } from '../config/game';
 import { PHYSICS, averageDynamicSpeed } from '../config/physics';
 import { SCORE } from '../config/score';
+import { ABILITIES } from '../config/abilities';
+import type { CharacterConfig } from '../config/characters';
 import { GameState, isPlayableState } from './GameState';
 import { GameLoop } from './GameLoop';
 import { EventBus } from './EventBus';
 import { PhysicsWorld } from '../physics/PhysicsWorld';
 import { CollisionManager } from '../physics/CollisionManager';
 import { SupportSystem } from '../physics/SupportSystem';
+import { ExplosionSystem } from '../physics/ExplosionSystem';
 import { DestructionSystem } from '../physics/DestructionSystem';
 import { EntityFactory } from '../entities/EntityFactory';
 import type { Entity } from '../entities/Entity';
@@ -29,6 +32,11 @@ import type { LevelConfig } from '../levels/Level';
 import { AssetManager } from '../assets/AssetManager';
 import { AssetResolver } from '../assets/AssetResolver';
 import { AbilityRegistry } from '../abilities/AbilityRegistry';
+import { SpeedAbility } from '../abilities/SpeedAbility';
+import { SplitAbility } from '../abilities/SplitAbility';
+import { ExplosiveAbility } from '../abilities/ExplosiveAbility';
+import { WhiteAbility } from '../abilities/WhiteAbility';
+import type { AbilityContext } from '../abilities/Ability';
 import { computeLaunchVelocity, predictTrajectory } from '../utils/math';
 
 export class Game implements PointerDragTarget {
@@ -51,6 +59,7 @@ export class Game implements PointerDragTarget {
   private world!: PhysicsWorld;
   private collision!: CollisionManager;
   private support!: SupportSystem;
+  private explosion!: ExplosionSystem;
   private factory!: EntityFactory;
   private input!: PointerController;
   private debugPanel!: DebugPanel;
@@ -88,6 +97,24 @@ export class Game implements PointerDragTarget {
       audio: this.audio,
       score: this.score,
     });
+    // 爆炸特效（黑鸟爆炸 / 蛋爆炸统一走 EXPLOSION 事件）
+    this.bus.on('EXPLOSION', (e) => {
+      this.particles.spawnBurst(e.x, e.y, 26, { color: '#ff8a3d', size: 4 + Math.random() * 3, gravity: 120 });
+      this.particles.spawnBurst(e.x, e.y, 12, { color: '#5a5a5a', size: 5, gravity: 60, alpha: 0.8, life: 0.7 });
+      this.audio.play('explosion');
+      this.camera.shake(16);
+    });
+    this.bus.on('EGG_IMPACT', (p) => {
+      if (this.explosion) {
+        this.explosion.apply(
+          p.x,
+          p.y,
+          ABILITIES.EGG_EXPLOSION_RADIUS,
+          ABILITIES.EGG_EXPLOSION_FORCE,
+          ABILITIES.EGG_EXPLOSION_DAMAGE,
+        );
+      }
+    });
     this.setupUi();
     this.registerAbilities();
   }
@@ -107,6 +134,7 @@ export class Game implements PointerDragTarget {
     this.renderer = new Renderer(this.canvas, this.camera, this.assets);
     this.input = new PointerController(this.canvas, this.camera);
     this.input.setTarget(this);
+    this.input.onTap = () => this.triggerAbility();
     const panelEl = document.getElementById('debug-panel') as HTMLElement | null;
     this.debugPanel = new DebugPanel(panelEl, this.debugHooks());
 
@@ -290,6 +318,7 @@ export class Game implements PointerDragTarget {
     this.collision = new CollisionManager(this.bus);
     this.collision.attach(this.world.engine);
     this.support = new SupportSystem(this.world);
+    this.explosion = new ExplosionSystem(this.world, this.bus, this.entityById);
     this.factory = new EntityFactory(this.resolver);
 
     this.entities.length = 0;
@@ -504,7 +533,10 @@ export class Game implements PointerDragTarget {
 
     if (p && p.launched && !p.finished) {
       const elapsed = (performance.now() - p.launchedAt) / 1000;
-      if (elapsed > GAME.PROJECTILE_TIMEOUT) p.finished = true;
+      if (elapsed > GAME.PROJECTILE_TIMEOUT) {
+        p.finished = true;
+        p.markForRemoval(); // 超时视为已用，移除避免无限滚动阻塞结算
+      }
       if (
         p.body.position.x < GAME.BOUNDS.minX ||
         p.body.position.x > GAME.BOUNDS.maxX ||
@@ -617,6 +649,11 @@ export class Game implements PointerDragTarget {
       else if (isPlayableState(this.state)) this.pause();
       return;
     }
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (this.state === GameState.FLYING) this.triggerAbility();
+      return;
+    }
     if (!import.meta.env.DEV) return;
     switch (e.key.toLowerCase()) {
       case 'f1':
@@ -668,8 +705,51 @@ export class Game implements PointerDragTarget {
   }
 
   private registerAbilities(): void {
-    // 本轮仅 basic（无操作）可用；speed/split/explosive/heavy 下一轮实现
     this.abilities.register({ id: 'basic', trigger: () => { /* 无特殊能力 */ } });
+    this.abilities.register(new SpeedAbility());
+    this.abilities.register(new SplitAbility());
+    this.abilities.register(new ExplosiveAbility());
+    this.abilities.register(new WhiteAbility());
+  }
+
+  /** 飞行中触发当前角色能力（每只一次） */
+  private triggerAbility(): void {
+    const p = this.currentProjectile;
+    if (!p || !p.launched || p.abilityUsed) return;
+    if (this.state !== GameState.FLYING) return;
+    const ability = this.abilities.get(p.config.ability);
+    if (!ability) return;
+    p.abilityUsed = true;
+    ability.trigger(this.abilityContext(p));
+  }
+
+  private abilityContext(p: Projectile): AbilityContext {
+    return {
+      projectile: p,
+      world: this.world,
+      bus: this.bus,
+      particles: this.particles,
+      audio: this.audio,
+      explosion: this.explosion,
+      spawnProjectile: (config, x, y, velocity) => this.spawnDynamicProjectile(config, x, y, velocity),
+      removeProjectile: (proj) => this.removeFlyingProjectile(proj),
+    };
+  }
+
+  private spawnDynamicProjectile(
+    config: CharacterConfig,
+    x: number,
+    y: number,
+    velocity: { x: number; y: number },
+  ): Projectile {
+    const p = this.factory.createDynamicProjectile(config, x, y, velocity);
+    this.addEntity(p);
+    return p;
+  }
+
+  private removeFlyingProjectile(p: Projectile): void {
+    p.finished = true;
+    p.markForRemoval();
   }
 
   private debugHooks(): DebugHooks {

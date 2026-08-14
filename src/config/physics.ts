@@ -60,6 +60,11 @@ export function bodyEntityType(body: Body): string | undefined {
   return (body.plugin as { entityType?: string } | undefined)?.entityType;
 }
 
+/** 是否为“蛋”刚体（白鸟下蛋，碰撞即爆炸） */
+export function bodyIsEgg(body: Body): boolean {
+  return (body.plugin as { isEgg?: boolean } | undefined)?.isEgg === true;
+}
+
 export function bodyEntityId(body: Body): string | undefined {
   return (body.plugin as { entityId?: string } | undefined)?.entityId;
 }

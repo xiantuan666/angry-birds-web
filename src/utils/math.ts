@@ -76,6 +76,30 @@ export function predictTrajectory(
   return points;
 }
 
+/** 能力·加速：保持方向，速度 ×multiplier 并钳制到 maxSpeed */
+export function boostVelocity(velocity: Vec2, multiplier: number, maxSpeed: number): Vec2 {
+  const len = Math.hypot(velocity.x, velocity.y) || 1;
+  const speed = Math.min(len * multiplier, maxSpeed);
+  return { x: (velocity.x / len) * speed, y: (velocity.y / len) * speed };
+}
+
+/** 能力·分裂：生成 count 个速度（中间保持原速度，两侧按 spreadRad 展开并乘 magnitudeFactor） */
+export function splitVelocities(velocity: Vec2, count: number, spreadRad: number, magnitudeFactor: number): Vec2[] {
+  const vels: Vec2[] = [];
+  const mid = Math.floor(count / 2);
+  for (let i = 0; i < count; i++) {
+    const offset = (i - mid) * spreadRad;
+    if (offset === 0) {
+      vels.push({ x: velocity.x, y: velocity.y });
+      continue;
+    }
+    const angle = Math.atan2(velocity.y, velocity.x) + offset;
+    const speed = Math.hypot(velocity.x, velocity.y) * magnitudeFactor;
+    vels.push({ x: Math.cos(angle) * speed, y: Math.sin(angle) * speed });
+  }
+  return vels;
+}
+
 /** 音效增益换算：master × 分轨音量（0~1） */
 export function computeGain(master: number, track: number): number {
   return clamp01(master) * clamp01(track);

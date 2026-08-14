@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { hasSupportBelow, isFallen } from '../src/physics/SupportSystem';
+import { hasSupportBelow, shouldWakeOnSupportChange, isFallen } from '../src/physics/SupportSystem';
 
 describe('hasSupportBelow 支撑探测', () => {
   const beam = { minX: 0, minY: 90, maxX: 100, maxY: 100 }; // 底面 y=100
@@ -18,6 +18,20 @@ describe('hasSupportBelow 支撑探测', () => {
 
   it('支撑体完全在实体上方时不算支撑', () => {
     expect(hasSupportBelow(beam, [{ minX: 0, minY: 80, maxX: 100, maxY: 90 }], 4)).toBe(false);
+  });
+});
+
+describe('shouldWakeOnSupportChange 支撑丢失级联唤醒', () => {
+  it('支撑未变或增加时不唤醒', () => {
+    expect(shouldWakeOnSupportChange(['a'], ['a'])).toBe(false);
+    expect(shouldWakeOnSupportChange(['a'], ['a', 'b'])).toBe(false);
+    expect(shouldWakeOnSupportChange([], ['a'])).toBe(false);
+  });
+
+  it('有原支撑消失时唤醒', () => {
+    expect(shouldWakeOnSupportChange(['a'], [])).toBe(true);
+    expect(shouldWakeOnSupportChange(['a', 'b'], ['b'])).toBe(true);
+    expect(shouldWakeOnSupportChange(['a'], ['b'])).toBe(true); // 支撑被替换也唤醒重新沉降
   });
 });
 

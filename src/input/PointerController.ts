@@ -13,6 +13,8 @@ export class PointerController {
   private activePointerId: number | null = null;
   private dragging = false;
   private target: PointerDragTarget | null = null;
+  /** 非拖拽点击回调（能力触发用） */
+  onTap: ((wx: number, wy: number) => void) | null = null;
 
   constructor(private readonly canvas: HTMLCanvasElement, private readonly camera: Camera) {
     canvas.addEventListener('pointerdown', this.onDown);
@@ -46,6 +48,9 @@ export class PointerController {
         // 某些环境不支持指针捕获，忽略
       }
       e.preventDefault();
+    } else if (this.onTap) {
+      // 未命中拖拽目标 → 视为点击（能力触发）
+      this.onTap(w.x, w.y);
     }
   };
 

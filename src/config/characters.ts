@@ -21,10 +21,10 @@ export interface CharacterConfig {
 
 export const CHARACTERS: Record<string, CharacterConfig> = {
   red: { id: 'red', name: '小红', sprite: ASSETS.birds.red, radius: 24, mass: 1.0, density: 0.002, friction: 0.5, restitution: 0.35, launchPower: 20, ability: 'basic' },
-  yellow: { id: 'yellow', name: '小黄', sprite: ASSETS.birds.yellow, radius: 20, mass: 0.9, density: 0.002, friction: 0.5, restitution: 0.4, launchPower: 21, ability: 'split' },
-  blue: { id: 'blue', name: '小蓝', sprite: ASSETS.birds.blue, radius: 22, mass: 1.1, density: 0.002, friction: 0.5, restitution: 0.35, launchPower: 20, ability: 'speed' },
+  yellow: { id: 'yellow', name: '小黄', sprite: ASSETS.birds.yellow, radius: 20, mass: 0.9, density: 0.002, friction: 0.5, restitution: 0.4, launchPower: 21, ability: 'speed' },
+  blue: { id: 'blue', name: '小蓝', sprite: ASSETS.birds.blue, radius: 22, mass: 1.1, density: 0.002, friction: 0.5, restitution: 0.35, launchPower: 20, ability: 'split' },
   black: { id: 'black', name: '小黑', sprite: ASSETS.birds.black, radius: 25, mass: 1.0, density: 0.0022, friction: 0.5, restitution: 0.3, launchPower: 19, ability: 'explosive' },
-  white: { id: 'white', name: '小白', sprite: ASSETS.birds.white, radius: 26, mass: 1.3, density: 0.0022, friction: 0.5, restitution: 0.3, launchPower: 19, ability: 'heavy' },
+  white: { id: 'white', name: '小白', sprite: ASSETS.birds.white, radius: 26, mass: 1.3, density: 0.0022, friction: 0.5, restitution: 0.3, launchPower: 19, ability: 'white' },
 };
 
 export interface TargetConfig {

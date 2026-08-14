@@ -25,8 +25,8 @@ export const GAME = {
   MIN_LAUNCH_RATIO: 0.12,
   /** 瞄准轨迹预测用重力加速度（世界单位/秒²，与 Matter gravity.y=1 等效） */
   PREDICT_GRAVITY: 1000,
-  /** 瞄准轨迹预测用空气阻力（与刚体 frictionAir 一致，默认 0.01） */
-  PREDICT_FRICTION_AIR: 0.002,
+  /** 瞄准轨迹预测用空气阻力（与刚体 frictionAir 一致） */
+  PREDICT_FRICTION_AIR: 0.005,
   /** 角色飞行超时（秒），超时视为本发结束 */
   PROJECTILE_TIMEOUT: 8,
   /** 物理稳定判定：动态体平均速度低于该值即视为接近静止（单位/帧） */
@@ -39,6 +39,8 @@ export const GAME = {
   FALL_DISTANCE: 30,
   /** 支撑探测容差（世界单位）：支撑面在实体底部下方不超过该值视为有支撑 */
   SUPPORT_GAP: 4,
+  /** 近静止判定速度（单位/帧）：低于该值视为静止，参与支撑集合检测 */
+  REST_SPEED: 0.05,
   /** 越界清理边界 */
   BOUNDS: { minX: -1000, maxX: 5000, maxY: 3000 },
   /** 碎片刚体数量上限 */
